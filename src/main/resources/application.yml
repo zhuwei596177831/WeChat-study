@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: WeChat-Study
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      indent-output: true
+server:
+  port: 65001
+  servlet:
+    context-path: /weChat
+weChat:
+  appID: wxe47b76b52b3989d9
+  appsecret: 5c659c07fbb51ee93c84675e7353e00c
