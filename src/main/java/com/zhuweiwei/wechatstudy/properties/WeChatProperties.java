@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class WeChatProperties {
     private String appID;
     private String appsecret;
+    private String accessTokenUrl;
 
     public String getAppID() {
         return appID;
@@ -28,5 +29,13 @@ public class WeChatProperties {
 
     public void setAppsecret(String appsecret) {
         this.appsecret = appsecret;
+    }
+
+    public String getAccessTokenUrl() {
+        return accessTokenUrl;
+    }
+
+    public void setAccessTokenUrl(String accessTokenUrl) {
+        this.accessTokenUrl = accessTokenUrl;
     }
 }

@@ -13,3 +13,4 @@ server:
 weChat:
   appID: wxe47b76b52b3989d9
   appsecret: 5c659c07fbb51ee93c84675e7353e00c
+  accessTokenUrl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s

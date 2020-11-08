@@ -29,7 +29,6 @@ public class WeiXinSignatureUtils {
      * @description: 校验微信signature
      **/
     public static Boolean checkSignature(String signature, String timestamp, String nonce) {
-        logger.info("-------执行微信签名加密验证---------");
         List<String> list = new ArrayList<>();
         list.add(TOKEN);
         list.add(timestamp);
@@ -65,7 +64,6 @@ public class WeiXinSignatureUtils {
                 }
                 result += temp;
             }
-            logger.info("加密后的字符串：{}", result);
             return result;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

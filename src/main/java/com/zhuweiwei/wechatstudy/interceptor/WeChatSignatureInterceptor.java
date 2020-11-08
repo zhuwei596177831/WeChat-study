@@ -1,12 +1,20 @@
 package com.zhuweiwei.wechatstudy.interceptor;
 
+import com.alibaba.fastjson.JSON;
+import com.zhuweiwei.wechatstudy.constant.EventType;
+import com.zhuweiwei.wechatstudy.constant.MediaAndMsgType;
+import com.zhuweiwei.wechatstudy.constant.XmlKey;
+import com.zhuweiwei.wechatstudy.util.HttpUtils;
 import com.zhuweiwei.wechatstudy.util.WeiXinSignatureUtils;
 import com.zhuweiwei.wechatstudy.util.XmlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -20,9 +28,11 @@ import java.util.Map;
  * @date 2020-11-07 16:48:19
  * @description 微信signature校验拦截器
  */
+@Component
 public class WeChatSignatureInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(AccessController.class);
-
+    @Resource
+    RestTemplateBuilder restTemplateBuilder;
 
     /**
      * @param httpServletRequest:
@@ -51,7 +61,7 @@ public class WeChatSignatureInterceptor implements HandlerInterceptor {
      **/
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse response, Object handler) throws Exception {
-        System.out.println("-------------验证微信服务号开始----------");
+        logger.info("-------------验证微信服务号开始----------");
         //开发者微信号
         String signature = httpServletRequest.getParameter("signature");
         //时间戳
@@ -63,7 +73,7 @@ public class WeChatSignatureInterceptor implements HandlerInterceptor {
         logger.info("signature is：{},timestamp is：{},nonce is：{},echostr is：{}",
                 signature, timestamp, nonce, echostr);
         if (WeiXinSignatureUtils.checkSignature(signature, timestamp, nonce)) {
-            System.out.println("-------------验证微信服务号结束-----------");
+            logger.info("-------------验证微信服务号结束-----------");
             ServletOutputStream outputStream = response.getOutputStream();
             if (StringUtils.hasLength(echostr)) {
                 outputStream.write(echostr.getBytes());
@@ -73,7 +83,23 @@ public class WeChatSignatureInterceptor implements HandlerInterceptor {
             logger.info("消息来源openid：{}", openid);
             ServletInputStream inputStream = httpServletRequest.getInputStream();
             Map<String, String> map = XmlUtil.parseDataFromXml(inputStream);
-            outputStream.write(XmlUtil.generateReturnTextData(map).getBytes(StandardCharsets.UTF_8));
+            String Content = map.get(XmlKey.Content.getName());
+            String picUrl = map.get(XmlKey.PicUrl.getName());
+            String resultXml;
+            if ("闫盼盼".equals(Content) || picUrl != null) {
+                String result = HttpUtils.postForSystemFile(restTemplateBuilder.build(), MediaAndMsgType.image.getType());
+                resultXml = XmlUtil.generateImageData(map, JSON.parseObject(result).getString("media_id"));
+            } else {
+                if (EventType.CLICK.getType().equals(map.get(XmlKey.Event.getName()))) {
+                    resultXml = XmlUtil.generateClickData(map, restTemplateBuilder.build());
+                } else if (EventType.VIEW.getType().equals(map.get(XmlKey.Event.getName()))) {
+                    return false;
+                } else {
+                    resultXml = XmlUtil.generateReturnTextData(map);
+                }
+            }
+            logger.info("返回报文：\n{}", resultXml);
+            outputStream.write(resultXml.getBytes(StandardCharsets.UTF_8));
             return false;
         }
         logger.warn("不是微信服务号发来的请求");
