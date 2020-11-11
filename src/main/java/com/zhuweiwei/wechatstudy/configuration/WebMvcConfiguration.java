@@ -1,7 +1,6 @@
 package com.zhuweiwei.wechatstudy.configuration;
 
-import com.zhuweiwei.wechatstudy.interceptor.WeChatSignatureInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.zhuweiwei.wechatstudy.interceptor.SignatureInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -16,10 +15,10 @@ import javax.annotation.Resource;
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
     @Resource
-    WeChatSignatureInterceptor weChatSignatureInterceptor;
+    SignatureInterceptor signatureInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(weChatSignatureInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(signatureInterceptor).addPathPatterns("/**");
     }
 }

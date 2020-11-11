@@ -13,8 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.sql.ResultSet;
 import java.util.*;
 
 /**
@@ -22,8 +22,8 @@ import java.util.*;
  * @date 2020-11-07 19:13:32
  * @description
  */
-public class XmlUtil {
-    private static final Logger logger = LoggerFactory.getLogger(XmlUtil.class);
+public class Dom4jXmlUtil {
+    private static final Logger logger = LoggerFactory.getLogger(Dom4jXmlUtil.class);
 
 
     public static Element generateXmlElement(Map<String, String> map) {
@@ -72,7 +72,7 @@ public class XmlUtil {
         String result;
         String eventKey = map.get(XmlKey.EventKey.getName());
         if (EventKey.featuredPicture.getEventKey().equals(eventKey)) {
-            String postData = HttpUtils.postForSystemFile(restTemplate, MediaAndMsgType.image.getType());
+            String postData = HttpUtil.postForSystemFile(restTemplate, MediaAndMsgType.image.getType());
             String media_id = JSON.parseObject(postData).getString("media_id");
             result = generateImageData(map, media_id);
         } else if (EventKey.phone.getEventKey().equals(eventKey)) {
@@ -98,20 +98,26 @@ public class XmlUtil {
         Document document;
         try {
             document = saxReader.read(inputStream);
+            Element xmlElement = document.getRootElement();
+            logger.info("请求报文：\n{}", xmlElement.asXML());
+            Map<String, String> map = new LinkedHashMap<>(16);
+            Iterator iterator = xmlElement.elementIterator();
+            while (iterator.hasNext()) {
+                Element element = (Element) iterator.next();
+                map.put(element.getName(), element.getStringValue());
+            }
+            return map;
         } catch (DocumentException e) {
             e.printStackTrace();
             logger.error("解析xml报文失败：{}", e.getMessage());
             return new HashMap<>();
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        Element xmlElement = document.getRootElement();
-        logger.info("请求报文：\n{}", xmlElement.asXML());
-        Map<String, String> map = new LinkedHashMap<>(16);
-        Iterator iterator = xmlElement.elementIterator();
-        while (iterator.hasNext()) {
-            Element element = (Element) iterator.next();
-            map.put(element.getName(), element.getStringValue());
-        }
-        return map;
     }
 
 

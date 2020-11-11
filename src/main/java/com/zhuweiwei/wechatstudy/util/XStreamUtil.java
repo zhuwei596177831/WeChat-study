@@ -1,55 +1,66 @@
 package com.zhuweiwei.wechatstudy.util;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.core.util.QuickWriter;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.io.xml.PrettyPrintWriter;
-import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.zhuweiwei.wechatstudy.entity.Image;
+import com.zhuweiwei.wechatstudy.entity.XmlData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.Writer;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * @author 朱伟伟
- * @date 2020-11-07 18:24:54
+ * @date 2020-11-11 21:56:42
  * @description
  */
 public class XStreamUtil {
+    private static final Logger logger = LoggerFactory.getLogger(XStreamUtil.class);
+    private static final XStream XML;
 
-    //xstream扩展
-    private static XStream xstream = new XStream(new XppDriver() {
-        public HierarchicalStreamWriter createWriter(Writer out) {
-            return new PrettyPrintWriter(out) {
-                // 对所有xml节点都增加CDATA标记
-                boolean cdata = true;
-
-                public void startNode(String name, Class clazz) {
-                    super.startNode(name, clazz);
-                }
-
-                protected void writeText(QuickWriter writer, String text) {
-                    if (cdata) {
-                        writer.write("<![CDATA[");
-                        writer.write(text);
-                        writer.write("]]>");
-                    } else {
-                        writer.write(text);
-                    }
-                }
-            };
-        }
-    });
-
-
-    public static String object2Xml(Object obj, Object child, String alias, String aliasForChild) {
-        xstream.alias(alias, obj.getClass());
-        xstream.alias(aliasForChild, child.getClass());
-        String xml = xstream.toXML(obj);
-        return xml;
+    static {
+        XML = new XStream();
+        XML.alias("xml", XmlData.class);
+        XML.alias("Image", Image.class);
+        //Security framework of XStream not initialized, XStream is probably vulnerabl
+        XML.allowTypesByRegExp(new String[]{".*"});
     }
 
-    public static String object2Xml(Object obj, String alias) {
-        xstream.alias(alias, obj.getClass());
-        String xml = xstream.toXML(obj);
-        return xml;
+    public static String toXml(XmlData xmlData) {
+        return XML.toXML(xmlData);
+    }
+
+
+    public static XmlData parseDataFromXml(InputStream inputStream) {
+        InputStreamReader inputStreamReader = null;
+        try {
+            StringBuilder stringBuilder = new StringBuilder(256);
+            inputStreamReader = new InputStreamReader(inputStream);
+            char[] chars = new char[1024];
+            while (inputStreamReader.read(chars) != -1) {
+                stringBuilder.append(chars);
+            }
+            String s = stringBuilder.toString();
+            logger.info("请求报文：\n{}", s);
+            return (XmlData) XML.fromXML(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.error("解析xml报文失败：{}", e.getMessage());
+            return new XmlData();
+        } finally {
+            if (inputStreamReader != null) {
+                try {
+                    inputStreamReader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

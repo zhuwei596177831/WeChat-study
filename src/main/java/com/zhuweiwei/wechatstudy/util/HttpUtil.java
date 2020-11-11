@@ -19,7 +19,7 @@ import java.util.Random;
  * @date 2020-11-08 15:39:01
  * @description
  */
-public class HttpUtils {
+public class HttpUtil {
     public static String postForSystemFile(RestTemplate restTemplate, String type) {
         MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("access_token", RefreshAccessToken.getAccessToken());

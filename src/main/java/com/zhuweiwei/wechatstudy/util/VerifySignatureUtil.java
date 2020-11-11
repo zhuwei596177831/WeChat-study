@@ -16,7 +16,7 @@ import java.util.List;
  * @date 2020-11-07 15:47:45
  * @description signature校验
  */
-public class WeiXinSignatureUtils {
+public class VerifySignatureUtil {
     private static final String TOKEN = "wechat-study";
     private static final Logger logger = LoggerFactory.getLogger(AccessController.class);
 

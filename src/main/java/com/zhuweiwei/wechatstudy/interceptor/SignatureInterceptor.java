@@ -1,12 +1,12 @@
 package com.zhuweiwei.wechatstudy.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import com.zhuweiwei.wechatstudy.constant.EventType;
 import com.zhuweiwei.wechatstudy.constant.MediaAndMsgType;
-import com.zhuweiwei.wechatstudy.constant.XmlKey;
-import com.zhuweiwei.wechatstudy.util.HttpUtils;
-import com.zhuweiwei.wechatstudy.util.WeiXinSignatureUtils;
-import com.zhuweiwei.wechatstudy.util.XmlUtil;
+import com.zhuweiwei.wechatstudy.entity.Image;
+import com.zhuweiwei.wechatstudy.entity.XmlData;
+import com.zhuweiwei.wechatstudy.util.HttpUtil;
+import com.zhuweiwei.wechatstudy.util.VerifySignatureUtil;
+import com.zhuweiwei.wechatstudy.util.XStreamUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
-import java.util.Map;
 
 /**
  * @author 朱伟伟
@@ -29,7 +28,7 @@ import java.util.Map;
  * @description 微信signature校验拦截器
  */
 @Component
-public class WeChatSignatureInterceptor implements HandlerInterceptor {
+public class SignatureInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(AccessController.class);
     @Resource
     RestTemplateBuilder restTemplateBuilder;
@@ -72,7 +71,7 @@ public class WeChatSignatureInterceptor implements HandlerInterceptor {
         String echostr = httpServletRequest.getParameter("echostr");
         logger.info("signature is：{},timestamp is：{},nonce is：{},echostr is：{}",
                 signature, timestamp, nonce, echostr);
-        if (WeiXinSignatureUtils.checkSignature(signature, timestamp, nonce)) {
+        if (VerifySignatureUtil.checkSignature(signature, timestamp, nonce)) {
             logger.info("-------------验证微信服务号结束-----------");
             ServletOutputStream outputStream = response.getOutputStream();
             if (StringUtils.hasLength(echostr)) {
@@ -82,22 +81,33 @@ public class WeChatSignatureInterceptor implements HandlerInterceptor {
             String openid = httpServletRequest.getParameter("openid");
             logger.info("消息来源openid：{}", openid);
             ServletInputStream inputStream = httpServletRequest.getInputStream();
-            Map<String, String> map = XmlUtil.parseDataFromXml(inputStream);
-            String Content = map.get(XmlKey.Content.getName());
-            String picUrl = map.get(XmlKey.PicUrl.getName());
+            XmlData xmlData = XStreamUtil.parseDataFromXml(inputStream);
+            xmlData.reverseFromAndTo();
+            String Content = xmlData.getContent();
+            String picUrl = xmlData.getPicUrl();
             String resultXml;
             if ("闫盼盼".equals(Content) || picUrl != null) {
-                String result = HttpUtils.postForSystemFile(restTemplateBuilder.build(), MediaAndMsgType.image.getType());
-                resultXml = XmlUtil.generateImageData(map, JSON.parseObject(result).getString("media_id"));
-            } else {
-                if (EventType.CLICK.getType().equals(map.get(XmlKey.Event.getName()))) {
-                    resultXml = XmlUtil.generateClickData(map, restTemplateBuilder.build());
-                } else if (EventType.VIEW.getType().equals(map.get(XmlKey.Event.getName()))) {
-                    return false;
+                String msgType;
+                if (picUrl != null) {
+                    msgType = xmlData.getMsgType();
                 } else {
-                    resultXml = XmlUtil.generateReturnTextData(map);
+                    msgType = MediaAndMsgType.image.getType();
+                    xmlData.setMsgType(msgType);
                 }
+                String result = HttpUtil.postForSystemFile(restTemplateBuilder.build(), msgType);
+                String media_id = JSON.parseObject(result).getString("media_id");
+                Image image = new Image(media_id);
+                xmlData.setImage(image);
+            } else {
+//                if (EventType.CLICK.getType().equals(map.get(XmlKey.Event.getName()))) {
+//                    resultXml = Dom4jXmlUtil.generateClickData(map, restTemplateBuilder.build());
+//                } else if (EventType.VIEW.getType().equals(map.get(XmlKey.Event.getName()))) {
+//                    return false;
+//                } else {
+//                    resultXml = Dom4jXmlUtil.generateReturnTextData(map);
+//                }
             }
+            resultXml = XStreamUtil.toXml(xmlData);
             logger.info("返回报文：\n{}", resultXml);
             outputStream.write(resultXml.getBytes(StandardCharsets.UTF_8));
             return false;
