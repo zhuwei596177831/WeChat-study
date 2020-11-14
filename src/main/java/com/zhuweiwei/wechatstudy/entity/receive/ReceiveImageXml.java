@@ -1,13 +1,13 @@
 package com.zhuweiwei.wechatstudy.entity.receive;
 
-import com.zhuweiwei.wechatstudy.entity.BaseXmlData;
+import com.zhuweiwei.wechatstudy.entity.BaseXml;
 
 /**
  * @author 朱伟伟
  * @date 2020-11-13 18:44:13
  * @description 接收图片数据
  */
-public class ReceiveImageXmlData extends BaseXmlData {
+public class ReceiveImageXml extends BaseXml {
     private static final long serialVersionUID = -3355001575286802358L;
     /**
      * 图片链接（由系统生成）

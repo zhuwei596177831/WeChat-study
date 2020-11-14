@@ -1,13 +1,13 @@
 package com.zhuweiwei.wechatstudy.entity.receive;
 
-import com.zhuweiwei.wechatstudy.entity.BaseXmlData;
+import com.zhuweiwei.wechatstudy.entity.BaseXml;
 
 /**
  * @author 朱伟伟
  * @date 2020-11-13 19:01:09
  * @description 接收地理位置数据
  */
-public class ReceiveLocationXmlData extends BaseXmlData {
+public class ReceiveLocationXml extends BaseXml {
     private static final long serialVersionUID = -7942531221735712391L;
     /**
      * 地理位置纬度

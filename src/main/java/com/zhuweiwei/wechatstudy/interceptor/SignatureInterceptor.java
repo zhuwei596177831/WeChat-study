@@ -1,8 +1,9 @@
 package com.zhuweiwei.wechatstudy.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import com.zhuweiwei.wechatstudy.constant.MediaAndMsgType;
-import com.zhuweiwei.wechatstudy.entity.Image;
+import com.zhuweiwei.wechatstudy.constant.MsgType;
+import com.zhuweiwei.wechatstudy.entity.BaseXml;
+import com.zhuweiwei.wechatstudy.entity.response.BaseImage;
 import com.zhuweiwei.wechatstudy.entity.XmlData;
 import com.zhuweiwei.wechatstudy.util.HttpUtil;
 import com.zhuweiwei.wechatstudy.util.VerifySignatureUtil;
@@ -12,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletInputStream;
@@ -49,7 +52,7 @@ public class SignatureInterceptor implements HandlerInterceptor {
      **/
 
     /**
-     * @description: <xml>
+     * <xml>
      * <ToUserName><![CDATA[gh_7d9341dff5a4]]></ToUserName>
      * <FromUserName><![CDATA[oCsUh6M1NMuQfl2EnwPEHIvYUCjQ]]></FromUserName>
      * <CreateTime>1604744086</CreateTime>
@@ -78,41 +81,10 @@ public class SignatureInterceptor implements HandlerInterceptor {
                 outputStream.write(echostr.getBytes());
                 return false;
             }
-            String openid = httpServletRequest.getParameter("openid");
-            logger.info("消息来源openid：{}", openid);
-            ServletInputStream inputStream = httpServletRequest.getInputStream();
-            XmlData xmlData = XStreamUtil.parseDataFromXml(inputStream);
-            xmlData.reverseFromAndTo();
-            String Content = xmlData.getContent();
-            String picUrl = xmlData.getPicUrl();
-            String resultXml;
-            if ("闫盼盼".equals(Content) || picUrl != null) {
-                String msgType;
-                if (picUrl != null) {
-                    msgType = xmlData.getMsgType();
-                } else {
-                    msgType = MediaAndMsgType.image.getType();
-                    xmlData.setMsgType(msgType);
-                }
-                String result = HttpUtil.postForSystemFile(restTemplateBuilder.build(), msgType);
-                String media_id = JSON.parseObject(result).getString("media_id");
-                Image image = new Image(media_id);
-                xmlData.setImage(image);
-            } else {
-//                if (EventType.CLICK.getType().equals(map.get(XmlKey.Event.getName()))) {
-//                    resultXml = Dom4jXmlUtil.generateClickData(map, restTemplateBuilder.build());
-//                } else if (EventType.VIEW.getType().equals(map.get(XmlKey.Event.getName()))) {
-//                    return false;
-//                } else {
-//                    resultXml = Dom4jXmlUtil.generateReturnTextData(map);
-//                }
-            }
-            resultXml = XStreamUtil.toXml(xmlData);
-            logger.info("返回报文：\n{}", resultXml);
-            outputStream.write(resultXml.getBytes(StandardCharsets.UTF_8));
-            return false;
+            return true;
         }
         logger.warn("不是微信服务号发来的请求");
         return false;
     }
+
 }

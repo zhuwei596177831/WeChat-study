@@ -1,7 +1,8 @@
 package com.zhuweiwei.wechatstudy.util;
 
 import com.thoughtworks.xstream.XStream;
-import com.zhuweiwei.wechatstudy.entity.Image;
+import com.zhuweiwei.wechatstudy.entity.BaseXml;
+import com.zhuweiwei.wechatstudy.entity.response.BaseImage;
 import com.zhuweiwei.wechatstudy.entity.XmlData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,13 +23,19 @@ public class XStreamUtil {
     static {
         XML = new XStream();
         XML.alias("xml", XmlData.class);
-        XML.alias("Image", Image.class);
+        XML.alias("Image", BaseImage.class);
         //Security framework of XStream not initialized, XStream is probably vulnerabl
         XML.allowTypesByRegExp(new String[]{".*"});
     }
 
     public static String toXml(XmlData xmlData) {
         return XML.toXML(xmlData);
+    }
+
+    public static XStream getXStream(Class<? extends BaseXml> aClass) {
+        XStream xStream = new XStream();
+        xStream.alias("xml", aClass);
+        return xStream;
     }
 
 

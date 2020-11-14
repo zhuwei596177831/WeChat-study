@@ -2,7 +2,7 @@ package com.zhuweiwei.wechatstudy.util;
 
 import com.alibaba.fastjson.JSON;
 import com.zhuweiwei.wechatstudy.constant.EventKey;
-import com.zhuweiwei.wechatstudy.constant.MediaAndMsgType;
+import com.zhuweiwei.wechatstudy.constant.MsgType;
 import com.zhuweiwei.wechatstudy.constant.XmlKey;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -49,7 +49,7 @@ public class Dom4jXmlUtil {
 
     public static String generateReturnTextData(Map<String, String> map, String content) {
         Element xmlElement = generateXmlElement(map);
-        xmlElement.addElement(XmlKey.MsgType.getName()).addCDATA(MediaAndMsgType.text.getType());
+        xmlElement.addElement(XmlKey.MsgType.getName()).addCDATA(MsgType.text.getType());
         xmlElement.addElement(XmlKey.Content.getName()).addCDATA(content);
         return xmlElement.asXML();
     }
@@ -62,7 +62,7 @@ public class Dom4jXmlUtil {
      **/
     public static String generateImageData(Map<String, String> map, String mediaId) {
         Element xmlElement = generateXmlElement(map);
-        xmlElement.addElement(XmlKey.MsgType.getName()).addCDATA(MediaAndMsgType.image.getType());
+        xmlElement.addElement(XmlKey.MsgType.getName()).addCDATA(MsgType.image.getType());
         Element imageElement = xmlElement.addElement(XmlKey.Image.getName());
         imageElement.addElement(XmlKey.MediaId.getName()).addCDATA(mediaId);
         return xmlElement.asXML();
@@ -72,7 +72,7 @@ public class Dom4jXmlUtil {
         String result;
         String eventKey = map.get(XmlKey.EventKey.getName());
         if (EventKey.featuredPicture.getEventKey().equals(eventKey)) {
-            String postData = HttpUtil.postForSystemFile(restTemplate, MediaAndMsgType.image.getType());
+            String postData = HttpUtil.postForSystemFile(restTemplate, MsgType.image.getType());
             String media_id = JSON.parseObject(postData).getString("media_id");
             result = generateImageData(map, media_id);
         } else if (EventKey.phone.getEventKey().equals(eventKey)) {
@@ -99,7 +99,7 @@ public class Dom4jXmlUtil {
         try {
             document = saxReader.read(inputStream);
             Element xmlElement = document.getRootElement();
-            logger.info("请求报文：\n{}", xmlElement.asXML());
+            logger.info("请求xml报文：\n{}", xmlElement.asXML());
             Map<String, String> map = new LinkedHashMap<>(16);
             Iterator iterator = xmlElement.elementIterator();
             while (iterator.hasNext()) {

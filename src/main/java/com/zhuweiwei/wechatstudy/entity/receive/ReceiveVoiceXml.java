@@ -1,13 +1,13 @@
 package com.zhuweiwei.wechatstudy.entity.receive;
 
-import com.zhuweiwei.wechatstudy.entity.BaseXmlData;
+import com.zhuweiwei.wechatstudy.entity.BaseXml;
 
 /**
  * @author 朱伟伟
  * @date 2020-11-13 18:45:49
  * @description 接收语音数据
  */
-public class ReceiveVoiceXmlData extends BaseXmlData {
+public class ReceiveVoiceXml extends BaseXml {
     private static final long serialVersionUID = -2461425049189348081L;
     /**
      * 语音消息媒体id，可以调用获取临时素材接口拉取数据。

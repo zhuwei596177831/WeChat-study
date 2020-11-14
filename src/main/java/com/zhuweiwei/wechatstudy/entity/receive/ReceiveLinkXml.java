@@ -1,13 +1,13 @@
 package com.zhuweiwei.wechatstudy.entity.receive;
 
-import com.zhuweiwei.wechatstudy.entity.BaseXmlData;
+import com.zhuweiwei.wechatstudy.entity.BaseXml;
 
 /**
  * @author 朱伟伟
  * @date 2020-11-13 19:04:51
  * @description 接收链接数据
  */
-public class ReceiveLinkXmlData extends BaseXmlData {
+public class ReceiveLinkXml extends BaseXml {
     private static final long serialVersionUID = 5190669152915972406L;
     /**
      * 消息标题

@@ -1,5 +1,7 @@
 package com.zhuweiwei.wechatstudy.entity;
 
+import com.zhuweiwei.wechatstudy.entity.response.BaseImage;
+
 import java.io.Serializable;
 
 /**
@@ -40,7 +42,7 @@ public class XmlData implements Serializable {
     /**
      * Image
      */
-    private Image Image;
+    private BaseImage Image;
     /**
      * 请求图片消息媒体id，可以调用获取临时素材接口拉取数据。
      */
@@ -124,11 +126,11 @@ public class XmlData implements Serializable {
         PicUrl = picUrl;
     }
 
-    public com.zhuweiwei.wechatstudy.entity.Image getImage() {
+    public BaseImage getImage() {
         return Image;
     }
 
-    public void setImage(com.zhuweiwei.wechatstudy.entity.Image image) {
+    public void setImage(BaseImage image) {
         Image = image;
     }
 
