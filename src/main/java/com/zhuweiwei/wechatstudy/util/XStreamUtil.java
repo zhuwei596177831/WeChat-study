@@ -2,8 +2,6 @@ package com.zhuweiwei.wechatstudy.util;
 
 import com.thoughtworks.xstream.XStream;
 import com.zhuweiwei.wechatstudy.entity.BaseXml;
-import com.zhuweiwei.wechatstudy.entity.response.BaseImage;
-import com.zhuweiwei.wechatstudy.entity.XmlData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,14 +20,9 @@ public class XStreamUtil {
 
     static {
         XML = new XStream();
-        XML.alias("xml", XmlData.class);
-        XML.alias("Image", BaseImage.class);
+        XML.alias("xml", BaseXml.class);
         //Security framework of XStream not initialized, XStream is probably vulnerabl
         XML.allowTypesByRegExp(new String[]{".*"});
-    }
-
-    public static String toXml(XmlData xmlData) {
-        return XML.toXML(xmlData);
     }
 
     public static XStream getXStream(Class<? extends BaseXml> aClass) {
@@ -39,7 +32,7 @@ public class XStreamUtil {
     }
 
 
-    public static XmlData parseDataFromXml(InputStream inputStream) {
+    public static String parseDataFromXml(InputStream inputStream) {
         InputStreamReader inputStreamReader = null;
         try {
             StringBuilder stringBuilder = new StringBuilder(256);
@@ -48,13 +41,13 @@ public class XStreamUtil {
             while (inputStreamReader.read(chars) != -1) {
                 stringBuilder.append(chars);
             }
-            String s = stringBuilder.toString();
-            logger.info("请求报文：\n{}", s);
-            return (XmlData) XML.fromXML(s);
+            String xml = stringBuilder.toString();
+            logger.info("请求报文：\n{}", xml);
+            return xml;
         } catch (IOException e) {
             e.printStackTrace();
             logger.error("解析xml报文失败：{}", e.getMessage());
-            return new XmlData();
+            return null;
         } finally {
             if (inputStreamReader != null) {
                 try {
