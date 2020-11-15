@@ -24,6 +24,12 @@ public class ResponseContentXml extends BaseXml {
         this.Content = xmlMap.get(XmlKey.Content.getName());
     }
 
+    public ResponseContentXml(Map<String, String> xmlMap, String Content) {
+        setBaseData(xmlMap);
+        setMsgType(com.zhuweiwei.wechatstudy.constant.MsgType.text.getType());
+        this.Content = Content;
+    }
+
 
     public String getContent() {
         return Content;
