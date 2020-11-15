@@ -1,28 +1,14 @@
 package com.zhuweiwei.wechatstudy.interceptor;
 
-import com.alibaba.fastjson.JSON;
-import com.zhuweiwei.wechatstudy.constant.MsgType;
-import com.zhuweiwei.wechatstudy.entity.BaseXml;
-import com.zhuweiwei.wechatstudy.entity.response.BaseImage;
-import com.zhuweiwei.wechatstudy.entity.XmlData;
-import com.zhuweiwei.wechatstudy.util.HttpUtil;
 import com.zhuweiwei.wechatstudy.util.VerifySignatureUtil;
-import com.zhuweiwei.wechatstudy.util.XStreamUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 
 /**
@@ -30,11 +16,8 @@ import java.security.AccessController;
  * @date 2020-11-07 16:48:19
  * @description 微信signature校验拦截器
  */
-@Component
 public class SignatureInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(AccessController.class);
-    @Resource
-    RestTemplateBuilder restTemplateBuilder;
 
     /**
      * @param httpServletRequest:

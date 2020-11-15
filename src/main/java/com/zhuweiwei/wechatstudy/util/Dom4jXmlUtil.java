@@ -1,17 +1,11 @@
 package com.zhuweiwei.wechatstudy.util;
 
-import com.alibaba.fastjson.JSON;
-import com.zhuweiwei.wechatstudy.constant.EventKey;
-import com.zhuweiwei.wechatstudy.constant.MsgType;
-import com.zhuweiwei.wechatstudy.constant.XmlKey;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.dom4j.tree.DefaultElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.InputStream;

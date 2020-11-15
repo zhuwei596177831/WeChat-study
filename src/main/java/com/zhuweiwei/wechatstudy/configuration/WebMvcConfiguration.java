@@ -5,8 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.Resource;
-
 /**
  * @author 朱伟伟
  * @date 2020-11-07 16:47:12
@@ -14,11 +12,8 @@ import javax.annotation.Resource;
  */
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
-    @Resource
-    SignatureInterceptor signatureInterceptor;
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(signatureInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(new SignatureInterceptor()).addPathPatterns("/**");
     }
 }
