@@ -1,7 +1,12 @@
 package com.zhuweiwei.wechatstudy.entity.response;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.zhuweiwei.wechatstudy.constant.MsgType;
+import com.zhuweiwei.wechatstudy.constant.XmlKey;
 import com.zhuweiwei.wechatstudy.entity.BaseXml;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * @author 朱伟伟
@@ -17,22 +22,32 @@ public class ResponseArticlesXml extends BaseXml {
     private String ArticleCount;
     /**
      * 图文消息信息，注意，如果图文数超过限制，则将只发限制内的条数 是
+     * ArrayList 去掉class="linked-list"属性
      */
-    private Articles Articles;
+    private ArrayList<ArticleItem> Articles;
+
+    public ResponseArticlesXml(Map<String, String> xmlMap, String articleCount, ArrayList<ArticleItem> articles) {
+        setBaseData(xmlMap);
+        setMsgType(com.zhuweiwei.wechatstudy.constant.MsgType.news.getType());
+        this.ArticleCount = articleCount;
+        this.Articles = articles;
+    }
 
     public String getArticleCount() {
         return ArticleCount;
     }
+
     @JacksonXmlProperty(localName = "ArticleCount")
     public void setArticleCount(String articleCount) {
         ArticleCount = articleCount;
     }
 
-    public com.zhuweiwei.wechatstudy.entity.response.Articles getArticles() {
+    public ArrayList<ArticleItem> getArticles() {
         return Articles;
     }
+
     @JacksonXmlProperty(localName = "Articles")
-    public void setArticles(com.zhuweiwei.wechatstudy.entity.response.Articles articles) {
+    public void setArticles(ArrayList<ArticleItem> articles) {
         Articles = articles;
     }
 }

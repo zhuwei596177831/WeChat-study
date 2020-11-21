@@ -11,10 +11,12 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.Resource;
 
 @SpringBootApplication
+@EnableScheduling
 public class WechatStudyApplication implements CommandLineRunner {
     @Resource
     RestTemplateBuilder restTemplateBuilder;
@@ -27,17 +29,34 @@ public class WechatStudyApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
 //        Thread.sleep(8000);
 //        addMenus();
+//        deleteMenus();
+    }
+
+    private void deleteMenus() {
+        restTemplateBuilder.build().getForObject(UploadUrl.DELETE_MENU.getUrl() + RefreshAccessToken.getAccessToken(), String.class);
     }
 
     private void addMenus() {
         JSONObject data = new JSONObject();
         JSONArray button = new JSONArray();
 
-        JSONObject featuredPicture = new JSONObject();
-        featuredPicture.put("type", "click");
-        featuredPicture.put("name", "精选图片");
-        featuredPicture.put("key", "featuredPicture");
-        button.add(featuredPicture);
+        JSONObject clickMeNow = new JSONObject();
+        clickMeNow.put("type", "click");
+        clickMeNow.put("name", "快点我啊");
+        clickMeNow.put("key", "clickMeNow");
+        JSONArray sub_button = new JSONArray();
+        JSONObject ypp = new JSONObject();
+        ypp.put("type", "click");
+        ypp.put("name", "闫盼盼");
+        ypp.put("key", "ypp");
+        sub_button.add(ypp);
+        JSONObject TODAY_MOVIE = new JSONObject();
+        TODAY_MOVIE.put("type", "click");
+        TODAY_MOVIE.put("name", "今日影片");
+        TODAY_MOVIE.put("key", "todayMovie");
+        sub_button.add(TODAY_MOVIE);
+        clickMeNow.put("sub_button", sub_button);
+        button.add(clickMeNow);
 
         JSONObject historyPicture = new JSONObject();
         historyPicture.put("type", "view");
@@ -49,7 +68,7 @@ public class WechatStudyApplication implements CommandLineRunner {
         contactAuthor.put("type", "click");
         contactAuthor.put("name", "联系作者");
         contactAuthor.put("key", "contactAuthor");
-        JSONArray sub_button = new JSONArray();
+        sub_button = new JSONArray();
         JSONObject weChat = new JSONObject();
         weChat.put("type", "click");
         weChat.put("name", "微信");

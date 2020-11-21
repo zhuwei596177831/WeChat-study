@@ -6,7 +6,9 @@ package com.zhuweiwei.wechatstudy.constant;
  * @description 事件类型key 菜单的key
  */
 public enum EventKey {
-    featuredPicture("featuredPicture", "精选图片"),
+    clickMeNow("clickMeNow", "快点我啊"),
+    ypp("ypp", "闫盼盼"),
+    todayMovie("todayMovie", "今日影片"),
     contactAuthor("contactAuthor", "联系作者"),
     weChat("weChat", "微信"),
     aliPay("aliPay", "支付宝"),

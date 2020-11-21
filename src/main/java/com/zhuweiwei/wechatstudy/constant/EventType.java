@@ -64,6 +64,10 @@ public enum EventType {
      * 请注意：永久素材id必须是在“素材管理/新增永久素材”接口上传后获得的合法id。​
      */
     VIEW_LIMITED("VIEW_LIMITED", "view_limited"),
+    UNSUBSCRIBE("unsubscribe", "取消订阅"),
+    SUBSCRIBE("subscribe", "订阅"),
+    SCAN("SCAN", "扫描带参数二维码事件"),
+    LOCATION("LOCATION", "上报地理位置事件"),
     ;
     private final String type;
     private final String description;

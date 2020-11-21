@@ -28,7 +28,7 @@ public class BaseXml extends BaseEntity {
     private String CreateTime;
     /**
      * 消息类型，文本为text 图片为image 语音为voice 视频为video
-     * 小视频为shortvideo 地理位置为location 链接为link
+     * 小视频为shortvideo 地理位置为location 链接为link 事件为event
      */
     private String MsgType;
 

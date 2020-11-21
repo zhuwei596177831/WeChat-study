@@ -20,16 +20,21 @@ import java.util.Random;
  * @description
  */
 public class HttpUtil {
-    public static String postForSystemFile(RestTemplate restTemplate, String type) {
+
+    public static String fineName = "";
+
+    public static String postForSystemFile(String url, RestTemplate restTemplate, String type) {
         MultiValueMap<String, Object> multiValueMap = new LinkedMultiValueMap<>();
         multiValueMap.add("access_token", RefreshAccessToken.getAccessToken());
         multiValueMap.add("type", type);
         try {
-            File file = new File("D:/闫盼盼《 甜蜜的俘虜 》");
-            if (file.exists()) {
-                File[] files = file.listFiles();
+            File folder = new File("D:/闫盼盼《 甜蜜的俘虜 》");
+            if (folder.exists()) {
+                File[] files = folder.listFiles();
                 if (files != null && files.length > 0) {
-                    multiValueMap.add("media", new FileSystemResource(files[new Random().nextInt(files.length)]));
+                    File file = files[new Random().nextInt(files.length)];
+                    fineName = file.getName();
+                    multiValueMap.add("media", new FileSystemResource(file));
                 }
             }
         } catch (Exception e) {
@@ -38,7 +43,7 @@ public class HttpUtil {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(multiValueMap, httpHeaders);
-        return restTemplate.exchange(UploadUrl.UPLOAD_MEDIA.getUrl(), HttpMethod.POST, httpEntity, String.class).getBody();
+        return restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class).getBody();
     }
 
 }
