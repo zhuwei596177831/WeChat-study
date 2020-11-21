@@ -2,6 +2,7 @@ package com.zhuweiwei.wechatstudy.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 public class VerifySignatureUtil {
     private static final String TOKEN = "wechat-study";
+//    private static final String TOKEN = "596177831";
     private static final Logger logger = LoggerFactory.getLogger(AccessController.class);
 
     /**

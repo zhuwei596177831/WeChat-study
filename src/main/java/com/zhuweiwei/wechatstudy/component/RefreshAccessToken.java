@@ -39,6 +39,7 @@ public class RefreshAccessToken implements InitializingBean {
             logger.info("refresh access_token......");
             String url = String.format(weChatProperties.getAccessTokenUrl(), weChatProperties.getAppID(), weChatProperties.getAppsecret());
             String result = restTemplateBuilder.build().getForObject(url, String.class);
+            logger.info("获取access_token返回：\n{}", result);
             JSONObject jsonObject = JSON.parseObject(result);
             tokenMap.put("access_token", jsonObject.getString("access_token"));
             Long expires_in = jsonObject.getLong("expires_in");
